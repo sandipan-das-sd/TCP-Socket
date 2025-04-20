@@ -1,40 +1,27 @@
 import socket
 
-host = "localhost"
-port = 8000
-
-# Create TCP socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((host, port))
-server.listen(1)
-
+server.bind(('localhost', 8000))
+server.listen(1)  
 print("Waiting for connection...")
+
 conn, addr = server.accept()
-print("Server connected to", addr)
+print("Connected to client:", addr)
 
-# Communication loop
+# Server sends first message
+conn.send("Welcome to the server!".encode())
+
 while True:
-    try:
-        data = conn.recv(1024).decode()
-        if not data:
-            print("Client disconnected.")
-            break
-
-        print("Client:", data)
-
-        message = input("You (server): ")
-        conn.send(message.encode())
-
-        if message.lower() == 'exit':
-            print("Exiting chat...")
-            break
-
-    except Exception as e:
-        print("Error:", e)
+    # Receive message from client
+    data = conn.recv(1024).decode()
+    if not data:
+        print("Client disconnected.")
         break
+    print("Client:", data)
 
-# Close connections
+    # Send message to client
+    message = input("You (server): ")
+    conn.send(message.encode())
+
 conn.close()
 server.close()
-print("Connection closed.")
-print("Server shut down.")

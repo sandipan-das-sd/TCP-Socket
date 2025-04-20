@@ -1,16 +1,19 @@
 import socket
-client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host="localhost"
-port=8000
-client.connect((host,port))
-print("connected to server")
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(('localhost', 8000))
+print("Connected to server")
+
 while True:
-    messge=input("You (client): ")
-    client.send(messge.encode())
-    if messge.lower() == 'exit':
+    
+    server_msg = client.recv(1024).decode()
+    if not server_msg:
+        print("Server disconnected.")
         break
-    data=client.recv(1024).decode()
-    print("data from server:",data)
+    print("Server:", server_msg)
+
+    # Send message to server
+    message = input("You (client): ")
+    client.send(message.encode())
+
 client.close()
-print("Connection closed")
-print("Client closed")
