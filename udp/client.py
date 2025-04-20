@@ -1,25 +1,14 @@
 import socket
 
-host = "localhost"
-port = 8000
-
-# Create UDP socket
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-print(f"Connected to UDP server at {host}:{port}")
+server_address = ('localhost', 8000)
+print("Connected to server")
 
 while True:
+    # Receive message from server
+    server_msg, _ = client.recvfrom(1024)
+    print("Server:", server_msg.decode())
+
+    # Send message to server
     message = input("You (client): ")
-    client.sendto(message.encode(), (host, port))
-
-    if message.lower() == 'exit':
-        break
-
-    data, addr = client.recvfrom(1024)
-    print("Server:", data.decode())
-
-    if data.decode().lower() == 'exit':
-        break
-
-client.close()
-print("Client closed.")
+    client.sendto(message.encode(), server_address)
